@@ -1,0 +1,33 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "index.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/resultados",
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, x-api-key",
+                "Access-Control-Allow-Max-Age": "86400"
+            },
+            "dest": "index.js"
+        },
+        {
+            "src": "/api/resultados/(.*)",
+            "methods": ["GET"],
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET",
+                "Access-Control-Allow-Headers": "Content-Type, x-api-key",
+                "Access-Control-Allow-Max-Age": "86400"
+            },
+            "dest": "index.js"
+        }
+    ]
+}
