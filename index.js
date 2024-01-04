@@ -55,8 +55,87 @@ app.get("/api/resultados", async (req, res) => {
     if (megaSenaTitle) {
       // Extrai os dados da Mega-Sena
       resultadoInfo.megasena = {
-        tituloModalidade: megaSenaTitle,
-        // Adicione aqui os outros campos de extração para a Mega-Sena
+        tituloModalidade: $(
+          "section.lot-mega-sena header.lottery-totem__header div.lottery-totem__header-grid div.lottery-totem__header-grid__result div.result__title h2"
+        )
+          .text()
+          .trim(),
+        dataSorteio: $(
+          "section.lot-mega-sena header.lottery-totem__header div.lottery-totem__header-grid div.lottery-totem__header-grid__result div.result__draw-date strong"
+        )
+          .text()
+          .trim(),
+        concurso: Number(
+          $(
+            "section.lot-mega-sena header.lottery-totem__header div.lottery-totem__header-grid div.lottery-totem__header-grid__result div.result__draw strong"
+          )
+            .text()
+            .trim()
+        ),
+        localDoSorteio: $(
+          "section.lot-mega-sena header.lottery-totem__header div.lottery-totem__header-grid div.lottery-totem__header-grid__result div.result__local div strong"
+        )
+          .text()
+          .trim(),
+        valorSorteado: $(
+          "section.lot-mega-sena header.lottery-totem__header div.lottery-totem__header-grid div.lottery-totem__header-grid__result div.result__prize div.result__prize__wrap"
+        )
+          .text()
+          .trim(),
+        dezenasSorteadas: $(
+          "section.lot-mega-sena div.lottery-totem__modules-grid div.lottery-totem__body div.lottery-totem__body__content div.result__content__wrap div.result__tens-grid div.lot-bg-light span"
+        )
+          .text()
+          .trim()
+          .match(/.{2}/g)
+          .map(function (dezena) {
+            return parseInt(dezena, 10);
+          }),
+        acumulada:
+          $(
+            "section.lot-mega-sena div.lottery-totem__modules-grid div.lottery-totem__body div.lottery-totem__body__content div.result__content__wrap p strong"
+          )
+            .text()
+            .trim() === "Acumulou!"
+            ? true
+            : false,
+        premiacoes: $(
+          "section.lot-mega-sena div.lottery-totem__modules-grid div.lottery-totem__body div.lottery-totem__body__content table.result__table-prize tbody tr:not(:first-child)"
+        )
+          .map(function () {
+            const premiacao = {
+              categoria: $(this).find("td:nth-child(1)").text().trim(),
+              ganhadores: $(this).find("td:nth-child(2)").text().trim(),
+              premio: $(this).find("td:nth-child(3)").text().trim(),
+            };
+            return premiacao;
+          })
+          .get(),
+        proxConcurso: Number(
+          $(
+            "section.lot-mega-sena div.lottery-totem__modules-grid div.lottery-totem__aside div.lottery-totem__aside__wrap div.lottery-totem__nextdraw div.card div.lottery-totem__nextdraw__block div.lottery-totem__nextdraw__info div.lottery-totem__nextdraw__draw strong"
+          )
+            .text()
+            .trim()
+        ),
+        dataProxSorteio: $(
+          "section.lot-mega-sena div.lottery-totem__modules-grid div.lottery-totem__aside div.lottery-totem__aside__wrap div.lottery-totem__nextdraw div.card div.lottery-totem__nextdraw__block div.lottery-totem__nextdraw__info div.lottery-totem__nextdraw__draw-date strong"
+        )
+          .text()
+          .trim(),
+        acumuladaProxSorteio:
+          $(
+            "section.lot-mega-sena div.lottery-totem__modules-grid div.lottery-totem__aside div.lottery-totem__aside__wrap div.lottery-totem__nextdraw div.card div.lottery-totem__nextdraw__block div.lottery-totem__nextdraw__info div.lottery-totem__nextdraw__is-jackpot span"
+          )
+            .text()
+            .trim() === "Acumulada!"
+            ? true
+            : false,
+        valorEstimadoProxConcurso: $(
+          "section.lot-mega-sena div.lottery-totem__modules-grid div.lottery-totem__aside div.lottery-totem__aside__wrap div.lottery-totem__nextdraw div.card div.lottery-totem__nextdraw__block div.lottery-totem__nextdraw__info div.lottery-totem__nextdraw__prize div.lottery-totem__nextdraw__prize__wrap"
+        )
+          .text()
+          .trim(),
       };
     } else {
       // Configura dados padrão ou vazios para a Mega-Sena
